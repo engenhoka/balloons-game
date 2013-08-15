@@ -12,8 +12,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -36,6 +41,8 @@ public class BalloonsGame extends Application {
 	private Image[] images;
 
 	private Random random = new Random(System.currentTimeMillis());
+	
+	private Timeline balloonsTimeline = new Timeline();
 
 	public static void main(String[] args) {
 		launch(args);
@@ -70,15 +77,17 @@ public class BalloonsGame extends Application {
 		
 		createBalloon();
 		
-		Timeline timeline = new Timeline();
-		timeline.setCycleCount(Timeline.INDEFINITE);
+		balloonsTimeline.setCycleCount(Timeline.INDEFINITE);
 		
 		KeyFrame kf = new KeyFrame(Duration.millis(33.33), new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
 			update();
 		}});
 		
-		timeline.getKeyFrames().add(kf);
-		timeline.play();
+		balloonsTimeline.getKeyFrames().add(kf);
+		//balloonsTimeline.play();
+		
+		controls(root);
+		clock(root);
 		
 		stage.setScene(scene);
 		stage.show();
@@ -116,4 +125,56 @@ public class BalloonsGame extends Application {
 		}
 	}
 
+	private void controls(Group root) {
+		Button playButton = new Button("Play / Pause");
+		playButton.setTranslateX(370);
+		playButton.setTranslateY(600);
+		
+		playButton.setOnMousePressed(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				System.out.println("Play / Pause");
+				running = !running;
+				countDown = 30;
+				clockText.setText("30");
+				
+				if (running) {
+					clockTimeline.play();
+					balloonsTimeline.play();
+				}
+				else {
+					clockTimeline.stop();
+					balloonsTimeline.stop();
+				}
+			}
+		});
+		
+		root.getChildren().add(playButton);
+	}
+	
+	private int countDown;
+	
+	private boolean running;
+	
+	private Timeline clockTimeline = new Timeline();
+	
+	private final Text clockText = new Text(420, 580, "30");
+	
+	private void clock(Group root) {
+		clockTimeline.setCycleCount(Timeline.INDEFINITE);
+		
+		clockText.setFont(Font.font ("Verdana",FontWeight.BOLD,  20));
+		clockText.setFill(Color.WHITESMOKE);
+		
+		KeyFrame kf = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
+			if (running) {
+				clockText.setText(String.valueOf(countDown));
+				countDown--;
+			}
+		}});
+		
+		clockTimeline.getKeyFrames().add(kf);
+		
+		root.getChildren().add(clockText);
+	}
 }
