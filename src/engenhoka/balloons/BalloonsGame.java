@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -128,7 +129,7 @@ public class BalloonsGame extends Application {
 	private void controls(Group root) {
 		Button playButton = new Button("Play / Pause");
 		playButton.setTranslateX(370);
-		playButton.setTranslateY(600);
+		playButton.setTranslateY(100);
 		
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -158,23 +159,38 @@ public class BalloonsGame extends Application {
 	
 	private Timeline clockTimeline = new Timeline();
 	
-	private final Text clockText = new Text(420, 580, "30");
+	private final Text clockText = new Text(380, 80, "30");
 	
 	private void clock(Group root) {
 		clockTimeline.setCycleCount(Timeline.INDEFINITE);
 		
-		clockText.setFont(Font.font ("Verdana",FontWeight.BOLD,  20));
+		clockText.setFont(Font.font ("Verdana",FontWeight.BOLD,  40));
 		clockText.setFill(Color.WHITESMOKE);
+		
+		InnerShadow is = new InnerShadow();
+		is.setOffsetX(3.0f);
+		is.setOffsetY(3.0f);
+		
+		clockText.setEffect(is);
 		
 		KeyFrame kf = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
 			if (running) {
 				clockText.setText(String.valueOf(countDown));
 				countDown--;
+				if (countDown == 0)
+					timeout();
 			}
 		}});
 		
 		clockTimeline.getKeyFrames().add(kf);
 		
 		root.getChildren().add(clockText);
+	}
+
+	protected void timeout() {
+		running = false;
+		clockTimeline.stop();
+		balloonsTimeline.stop();
+		clockText.setText("..");
 	}
 }
