@@ -11,8 +11,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 public class Balloon extends Parent {
-	private static final AudioClip balloonBurst = new AudioClip(Balloon.class.getResource("balloon-burst.wav").toString());
-
 	private double velocity;
 
 	public Balloon(Image image, double velocity) {
