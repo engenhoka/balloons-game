@@ -10,7 +10,8 @@ import javafx.scene.image.ImageView;
 
 public class Background extends Parent {
 	
-	private Image image = new Image(Background.class.getResourceAsStream("background.jpg"));
+	private static final String BACKGROUND = "background-full.jpg";
+	private Image image = new Image(Background.class.getResourceAsStream(BACKGROUND));
 	private DoubleProperty width;
 	private DoubleProperty height;
 	private ImageView background;
