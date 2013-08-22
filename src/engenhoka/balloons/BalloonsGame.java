@@ -185,6 +185,7 @@ public class BalloonsGame extends Application {
 		Iterator<Balloon> iterator = balloons.iterator();
 		while(iterator.hasNext()) {
 			Balloon balloon = iterator.next();
+			if (!balloon.isAlive()) iterator.remove();
 			
 			//balloon.setRotate(balloon.getRotate() + 20*DELTA_TIME);
 			balloon.setTranslateY(balloon.getTranslateY() - balloon.getVelocity()*DELTA_TIME);
