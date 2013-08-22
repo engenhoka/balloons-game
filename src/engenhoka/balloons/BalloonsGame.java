@@ -37,8 +37,6 @@ public class BalloonsGame extends Application {
 	private Group root;
 	private double time;
 
-	private Image[] images;
-
 	private Random random = new Random(System.currentTimeMillis());
 	
 	private Timeline balloonsTimeline = new Timeline();
@@ -77,15 +75,6 @@ public class BalloonsGame extends Application {
 		logo.translateXProperty().bind(scene.widthProperty().subtract(Resources.logo.getWidth()));
 		logo.translateYProperty().bind(scene.heightProperty().subtract(Resources.logo.getHeight()));
 		root.getChildren().add(logo);
-		
-		images = new Image[] {
-				Resources.balloonBlue,
-				Resources.balloonGreen,
-				Resources.balloonPink,
-				Resources.balloonRed,
-				Resources.balloonYellow,
-				Resources.balloonOrange
-		};
 		
 		balloonsTimeline.setCycleCount(Timeline.INDEFINITE);
 		
@@ -171,13 +160,14 @@ public class BalloonsGame extends Application {
 	}
 
 	private void createBalloon() {
-		int index = random.nextInt(images.length);
-		Image image = images[index];
+		int index = random.nextInt(Resources.balloons.size());
+		Image balloonImage = Resources.balloons.get(index);
+		Image powImage = Resources.pows.get(index);
 		
-		Balloon balloon = new Balloon(image, velocity);
+		Balloon balloon = new Balloon(balloonImage, powImage, velocity);
 		
 		balloon.setTranslateY(root.getScene().getHeight());
-		balloon.setTranslateX(random.nextDouble() * (root.getScene().getWidth() - image.getWidth()));
+		balloon.setTranslateX(random.nextDouble() * (root.getScene().getWidth() - balloonImage.getWidth()));
 		root.getChildren().add(balloon);
 		balloons.add(balloon);
 	}

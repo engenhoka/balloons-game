@@ -13,11 +13,12 @@ import javafx.util.Duration;
 public class Balloon extends Parent {
 	private double velocity;
 
-	public Balloon(Image image, double velocity) {
+	public Balloon(Image balloon, Image pow, double velocity) {
 		this.velocity = velocity;
 		
-		ImageView imageView = new ImageView(image);
-		ImageView powView = new ImageView(Resources.pow);
+		ImageView imageView = new ImageView(balloon);
+		ImageView powView = new ImageView(pow);
+		//ImageView powView = new ImageView(Resources.pow);
 //		powView.setScaleX(0.5);
 //		powView.setScaleY(0.5);
 //		powView.setTranslateX(pow.getWidth() * -0.5);
