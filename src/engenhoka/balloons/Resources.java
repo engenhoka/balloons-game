@@ -29,8 +29,9 @@ public class Resources {
 	
 	static {
 		for(String color: colors) {
+			System.out.println("Resources initing color " + color);
 			balloons.add(new Image(Resources.class.getResourceAsStream("balloon-" + color + ".png")));
-			pows.add(new Image(Resources.class.getResourceAsStream("pow-" + color + ".png")));
+			pows.add(new Image(Resources.class.getResourceAsStream("splashes/splash-" + color + ".png")));
 		}
 		
 		for(int i = 1; i <= LOGO_COUNT; i++)
