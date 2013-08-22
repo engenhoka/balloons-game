@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -27,6 +28,7 @@ public class Balloon extends Parent {
 //		powView.setTranslateX(pow.getWidth() * -0.5);
 		powView.setOpacity(0);
 		logoView.setOpacity(0);
+		logoView.setBlendMode(BlendMode.MULTIPLY);
 		
 		getChildren().add(imageView);
 		getChildren().add(powView);
