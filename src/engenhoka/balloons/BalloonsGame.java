@@ -57,8 +57,14 @@ public class BalloonsGame extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Balloons Game");
-		stage.setWidth(500);
-		stage.setHeight(700);
+//		stage.setWidth(500);
+//		stage.setHeight(700);
+		
+		// FIXME fix at bg dimensions ?
+		stage.setWidth(1128);
+		stage.setHeight(609);
+		stage.setResizable(false);
+		
 		//stage.setFullScreen(true);
 
 		root = new Group();
@@ -160,11 +166,14 @@ public class BalloonsGame extends Application {
 	}
 
 	private void createBalloon() {
-		int index = random.nextInt(Resources.balloons.size());
-		Image balloonImage = Resources.balloons.get(index);
-		Image powImage = Resources.pows.get(index);
+		int balloonIndex = random.nextInt(Resources.balloons.size());
+		Image balloonImage = Resources.balloons.get(balloonIndex);
+		Image powImage = Resources.pows.get(balloonIndex);
 		
-		Balloon balloon = new Balloon(balloonImage, powImage, velocity);
+		int logoIndex = random.nextInt(Resources.logos.size());
+		Image logoImage = Resources.logos.get(logoIndex);
+		
+		Balloon balloon = new Balloon(balloonImage, powImage, logoImage, velocity);
 		
 		balloon.setTranslateY(root.getScene().getHeight());
 		balloon.setTranslateX(random.nextDouble() * (root.getScene().getWidth() - balloonImage.getWidth()));

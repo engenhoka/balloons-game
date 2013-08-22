@@ -23,11 +23,17 @@ public class Resources {
 	
 	public final static List<Image> balloons = new ArrayList<>(colors.length);
 	public final static List<Image> pows = new ArrayList<>(colors.length);
+
+	private static final int LOGO_COUNT = 8;
+	public final static List<Image> logos = new ArrayList<>(LOGO_COUNT);
 	
 	static {
 		for(String color: colors) {
 			balloons.add(new Image(Resources.class.getResourceAsStream("balloon-" + color + ".png")));
 			pows.add(new Image(Resources.class.getResourceAsStream("pow-" + color + ".png")));
 		}
+		
+		for(int i = 1; i <= LOGO_COUNT; i++)
+			logos.add(new Image(Resources.class.getResourceAsStream(String.format("logos/logo-%02d.jpg", i))));
 	}
 }
