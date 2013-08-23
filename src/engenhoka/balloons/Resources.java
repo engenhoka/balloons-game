@@ -1,8 +1,5 @@
 package engenhoka.balloons;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 
@@ -14,20 +11,20 @@ public class Resources {
 	
 	private static final String colors[] = { "blue", "green", "pink", "red", "yellow", "orange" };
 	
-	public final static List<Image> balloons = new ArrayList<Image>(colors.length);
-	public final static List<Image> pows = new ArrayList<Image>(colors.length);
+	public final static Image[] balloons = new Image[colors.length];
+	public final static Image[] pows = new Image[colors.length];
 
 	private static final int LOGO_COUNT = 8;
-	public final static List<Image> logos = new ArrayList<Image>(LOGO_COUNT);
+	public final static Image[] logos = new Image[LOGO_COUNT];
 	
 	static {
-		for(String color: colors) {
-			System.out.println("Resources initing color " + color);
-			balloons.add(new Image(Resources.class.getResourceAsStream("balloon-" + color + ".png")));
-			pows.add(new Image(Resources.class.getResourceAsStream("splashes/splash-" + color + ".png")));
+		for(int i = 0; i < colors.length; i++) {
+			System.out.println("Resources initing color " + colors[i]);
+			balloons[i] = new Image(Resources.class.getResourceAsStream("balloon-" + colors[i] + ".png"));
+			pows[i] = new Image(Resources.class.getResourceAsStream("splashes/splash-" + colors[i] + ".png"));
 		}
 		
-		for(int i = 1; i <= LOGO_COUNT; i++)
-			logos.add(new Image(Resources.class.getResourceAsStream(String.format("logos/logo-%02d.jpg", i))));
+		for(int i = 0; i < LOGO_COUNT; i++)
+			logos[i] = new Image(Resources.class.getResourceAsStream(String.format("logos/logo-%02d.jpg", i+1)));
 	}
 }

@@ -11,11 +11,9 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.InnerShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -28,6 +26,8 @@ import javafx.util.Duration;
 public class BalloonsGame extends Application {
 
 	private static final double DELTA_TIME = 0.03333;
+	
+	public static BalloonsGame game;
 	
 	private List<Balloon> balloons = new ArrayList<Balloon>();
 	
@@ -47,6 +47,7 @@ public class BalloonsGame extends Application {
 	private int countDown;
 	
 	private Scene scene;
+
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -54,6 +55,8 @@ public class BalloonsGame extends Application {
 	
 	@Override
 	public void start(Stage stage) throws Exception {
+		game = this;
+		
 		stage.setTitle("Balloons Game");
 //		stage.setWidth(500);
 //		stage.setHeight(700);
@@ -75,15 +78,21 @@ public class BalloonsGame extends Application {
 		background.heightProperty().bind(scene.heightProperty());
 		root.getChildren().add(background);
 		
-		ImageView logo = new ImageView(Resources.logo);
-		logo.translateXProperty().bind(scene.widthProperty().subtract(Resources.logo.getWidth()));
-		logo.translateYProperty().bind(scene.heightProperty().subtract(Resources.logo.getHeight()));
+		final ImageView logo = new ImageView(Resources.logo);
+		logo.setScaleX(0.4);
+		logo.setScaleY(0.4);
+		logo.setTranslateX(440);
+		logo.setTranslateY(420);
+//		logo.translateXProperty().bind(scene.widthProperty().subtract(200));
+//		logo.translateYProperty().bind(scene.heightProperty().subtract(100));
+		
 		root.getChildren().add(logo);
 		
 		balloonsTimeline.setCycleCount(Timeline.INDEFINITE);
 		
 		KeyFrame kf = new KeyFrame(Duration.millis(33.33), new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
 			update();
+			logo.toFront();
 		}});
 		
 		balloonsTimeline.getKeyFrames().add(kf);
@@ -172,17 +181,13 @@ public class BalloonsGame extends Application {
 	}
 
 	private void createBalloon() {
-		int balloonIndex = random.nextInt(Resources.balloons.size());
-		Image balloonImage = Resources.balloons.get(balloonIndex);
-		Image powImage = Resources.pows.get(balloonIndex);
+		int colorIndex = random.nextInt(Resources.balloons.length);
+		int logoIndex = random.nextInt(Resources.logos.length);
 		
-		int logoIndex = random.nextInt(Resources.logos.size());
-		Image logoImage = Resources.logos.get(logoIndex);
-		
-		Balloon balloon = new Balloon(balloonImage, powImage, logoImage, velocity);
+		Balloon balloon = new Balloon(colorIndex, logoIndex, velocity);
 		
 		balloon.setTranslateY(root.getScene().getHeight());
-		balloon.setTranslateX(random.nextDouble() * (root.getScene().getWidth() - balloonImage.getWidth()));
+		balloon.setTranslateX(random.nextDouble() * (root.getScene().getWidth() - Resources.balloons[colorIndex].getWidth()));
 		currentScene.getChildren().add(balloon);
 		balloons.add(balloon);
 	}
@@ -210,5 +215,9 @@ public class BalloonsGame extends Application {
 				iterator.remove();
 			}
 		}
+	}
+
+	public void hitBalloon(int logoIndex) {
+		System.out.println("Balloon " + logoIndex);
 	}
 }

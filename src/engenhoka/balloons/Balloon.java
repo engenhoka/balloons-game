@@ -14,11 +14,14 @@ import javafx.util.Duration;
 
 public class Balloon extends Parent {
 	private double velocity;
-	
 	private boolean alive = true;
 
-	public Balloon(Image balloon, Image pow, Image partnerLogo, double velocity) {
+	public Balloon(int colorIndex, final int logoIndex, double velocity) {
 		this.velocity = velocity;
+		
+		Image balloon = Resources.balloons[colorIndex];
+		Image pow = Resources.pows[colorIndex];
+		Image partnerLogo = Resources.logos[logoIndex];
 		
 		ImageView imageView = new ImageView(balloon);
 		ImageView powView = new ImageView(pow);
@@ -55,9 +58,13 @@ public class Balloon extends Parent {
 		}});
 		
 		setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent event) {
-			timeline.play();
-			
-			Resources.pop.play();
+			if(alive) {
+				alive = false;
+				timeline.play();
+				Resources.pop.play();
+				
+				BalloonsGame.game.hitBalloon(logoIndex);
+			}
 		}});
 	}
 	
