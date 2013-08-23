@@ -32,7 +32,7 @@ public class BalloonsGame extends Application {
 	private List<Balloon> balloons = new ArrayList<Balloon>();
 	
 	private GameState state;
-	private Node currentScene;
+	private Group currentScene;
 
 	private Group root;
 	private double time;
@@ -46,8 +46,6 @@ public class BalloonsGame extends Application {
 
 	private int countDown;
 	
-	private boolean running;
-
 	private Scene scene;
 	
 	public static void main(String[] args) {
@@ -102,65 +100,73 @@ public class BalloonsGame extends Application {
 			currentScene = createMenu();
 			root.getChildren().add(currentScene);
 			break;
+			
+		case PLAYING:
+			root.getChildren().remove(currentScene);
+			currentScene = createCountDown();
+			root.getChildren().add(currentScene);
+			break;
 		}
 		
 		state = newState;
 	}
 
-	private Node createMenu() {
-		Group menu = new Group();
+	private Group createCountDown() {
+		Group group = new Group();
 		
-		final Button playButton = new Button("Play / Pause");
-		playButton.translateXProperty().bind(scene.widthProperty().subtract(100));
-		playButton.setTranslateY(100);
+		countDown = 30;
 		
 		final Text clockText = new Text("30");
-		clockText.translateXProperty().bind(scene.widthProperty().subtract(100));
-		clockText.setTranslateY(80);
-		
-		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
-			running = !running;
-			countDown = 30;
-			clockText.setText("30");
-			
-			if (running) {
-				clockTimeline.play();
-				balloonsTimeline.play();
-			} else {
-				clockTimeline.stop();
-				balloonsTimeline.stop();
-			}
-		}});
-		
-		clockTimeline.setCycleCount(Timeline.INDEFINITE);
-		
-		clockText.setFont(Font.font("Verdana", FontWeight.BOLD, 40));
-		clockText.setFill(Color.WHITESMOKE);
-		
+		clockText.translateXProperty().bind(scene.widthProperty().subtract(150));
+		clockText.setTranslateY(100);
+		clockText.setText("30");
+
 		InnerShadow is = new InnerShadow();
 		is.setOffsetX(3.0f);
 		is.setOffsetY(3.0f);
 		
-		clockText.setEffect(is);
+		clockText.setFont(Font.font("Verdana", FontWeight.BOLD, 100));
+		clockText.setFill(Color.WHITE);
+		clockText.setStroke(Color.BLACK);
+//		clockText.setEffect(is);
+		
+		group.getChildren().add(clockText);
 		
 		KeyFrame kf = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
-			if (running) {
-				clockText.setText(String.valueOf(countDown));
-				countDown--;
+			clockText.toFront();
+			clockText.setText(String.valueOf(countDown));
+			countDown--;
+			
+			if (countDown < 0) {
+				clockTimeline.stop();
+				balloonsTimeline.stop();
 				
-				if (countDown == 0) {
-					running = false;
-					clockTimeline.stop();
-					balloonsTimeline.stop();
-					clockText.setText("..");
-				}
+				changeState(GameState.MENU);
 			}
 		}});
 		
+		clockTimeline.setCycleCount(Timeline.INDEFINITE);
 		clockTimeline.getKeyFrames().add(kf);
 		
+		clockTimeline.play();
+		balloonsTimeline.play();
+		
+		return group;
+	}
+
+	private Group createMenu() {
+		Group menu = new Group();
+		
+		final Button playButton = new Button("Jogar");
+		playButton.translateXProperty().bind(scene.widthProperty().divide(2).subtract(playButton.widthProperty().divide(2)));
+		playButton.translateYProperty().bind(scene.heightProperty().divide(2).subtract(playButton.heightProperty().divide(2)));
+		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
+		
+		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
+			changeState(GameState.PLAYING);
+		}});
+		
 		menu.getChildren().add(playButton);
-		menu.getChildren().add(clockText);
 		
 		return menu;
 	}
@@ -177,7 +183,7 @@ public class BalloonsGame extends Application {
 		
 		balloon.setTranslateY(root.getScene().getHeight());
 		balloon.setTranslateX(random.nextDouble() * (root.getScene().getWidth() - balloonImage.getWidth()));
-		root.getChildren().add(balloon);
+		currentScene.getChildren().add(balloon);
 		balloons.add(balloon);
 	}
 
