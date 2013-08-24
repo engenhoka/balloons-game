@@ -1,5 +1,5 @@
 package engenhoka.balloons;
 
 public enum GameState {
-	MENU, PLAYING
+	MENU, PLAYING, WINNING, LOSE
 }

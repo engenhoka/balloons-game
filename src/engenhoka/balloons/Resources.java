@@ -8,6 +8,7 @@ public class Resources {
 	
 //	public final static Image pow = new Image(Resources.class.getResourceAsStream("pow.png"));
 	public final static AudioClip pop = new AudioClip(Resources.class.getResource("pop.mp3").toString());
+	public final static AudioClip applause = new AudioClip(Resources.class.getResource("applause.mp3").toString());
 	
 	private static final String colors[] = { "blue", "green", "pink", "red", "yellow", "orange" };
 	
@@ -23,8 +24,9 @@ public class Resources {
 			balloons[i] = new Image(Resources.class.getResourceAsStream("balloon-" + colors[i] + ".png"));
 			pows[i] = new Image(Resources.class.getResourceAsStream("splashes/splash-" + colors[i] + ".png"));
 		}
-		
+
 		for(int i = 0; i < LOGO_COUNT; i++)
 			logos[i] = new Image(Resources.class.getResourceAsStream(String.format("logos/logo-%02d.jpg", i+1)));
 	}
 }
+
