@@ -1,6 +1,7 @@
 package engenhoka.balloons;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -40,7 +41,7 @@ public class BalloonsGame extends Application {
 	
 	private List<Balloon> balloons = new ArrayList<Balloon>();
 	
-	private int score;
+	private int[] score = new int[Resources.LOGO_COUNT];
 	private GameState state;
 	private Group currentScene;
 
@@ -200,7 +201,7 @@ public class BalloonsGame extends Application {
 		
 		countDown = MAX_TIME;
 		velocity = INITIAL_VELOCITY;
-		score = 0;
+		Arrays.fill(score, 0);
 		bonusCount = 0;
 		
 		final Text clockText = new Text("30");
@@ -305,7 +306,7 @@ public class BalloonsGame extends Application {
 		}
 	}
 
-	public void hitBalloon(final int logoIndex, final ImageView logoView, final Transform transform) {
+	public void animateBalloon(final int logoIndex, final ImageView logoView, final Transform transform) {
 		if(state != GameState.PLAYING) return;
 		
 		double sx = transform.getMxx();
@@ -326,38 +327,21 @@ public class BalloonsGame extends Application {
 		double offsetY;
 		
 		if(logoIndex == BONUS_INDEX) {
-			offsetX = 500;
-			offsetY = 200;
-			countDown += 5;
-			
-			Text text = new Text("+5");
-			text.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
-			text.setTranslateX(tx);
-			text.setTranslateY(ty);
-			text.setFill(Color.WHITE);
-			text.setStroke(Color.BLACK);
-			currentScene.getChildren().add(text);
+			offsetX = scene.getWidth() - 150;
+			offsetY = 0;
 		} else {
 			int x = logoIndex % 6;
 			int y = logoIndex / 6;
 			
 			offsetX = x*LOGO_WIDTH*BALLOON_SCALE_X + x*15 - 50;
 			offsetY = y*LOGO_HEIGHT*BALLOON_SCALE_Y + y*15 - 10;
-			
-			timeline.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
-				final int bits = 1 << logoIndex;
-				
-				if((score & bits) == 0) {
-					score |= bits;
-				} else {
-					currentScene.getChildren().remove(logoView);
-				}
-				
-				if(score == 255) {
-					changeState(GameState.WINNING);
-				}
-			}});
 		}
+		
+		timeline.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
+			if(logoIndex == BONUS_INDEX || score[logoIndex] > 1) {
+				currentScene.getChildren().remove(logoView);
+			}
+		}});
 		
 		KeyFrame kf0 = new KeyFrame(Duration.millis(1000)
 				, new KeyValue(logoView.translateXProperty(), offsetX)
@@ -367,5 +351,41 @@ public class BalloonsGame extends Application {
 		timeline.getKeyFrames().addAll(kf0);
 
 		timeline.play();
+	}
+
+	public void incrementScore(int logoIndex, Transform transform) {
+		if(state != GameState.PLAYING) return;
+		
+		double sx = transform.getMxx();
+		double sy = transform.getMyy();
+		double tx = transform.getTx();
+		double ty = transform.getTy();
+		
+		if(logoIndex == BONUS_INDEX) {
+			countDown += 5;
+			
+			Text text = new Text("+5");
+			text.setFont(Font.font("Verdana", FontWeight.BOLD, 100));
+			text.setTranslateX(tx);
+			text.setTranslateY(ty);
+			text.setFill(Color.WHITE);
+			text.setStroke(Color.BLACK);
+			currentScene.getChildren().add(text);
+			
+			Timeline timeline = new Timeline();
+			KeyFrame kf0 = new KeyFrame(Duration.millis(1500), new KeyValue(text.opacityProperty(), 1));
+			KeyFrame kf1 = new KeyFrame(Duration.millis(2000), new KeyValue(text.opacityProperty(), 0));
+			timeline.getKeyFrames().addAll(kf0, kf1);
+			timeline.play();
+		} else {
+			score[logoIndex]++;
+
+			int count = 0;
+			for(int v : score)
+				if(v != 0) count++;
+			
+			if(count == Resources.LOGO_COUNT)
+				changeState(GameState.WINNING);
+		}
 	}
 }

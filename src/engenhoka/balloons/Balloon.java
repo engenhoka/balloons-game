@@ -61,7 +61,11 @@ public class Balloon extends Parent {
 		timeline.getKeyFrames().addAll(kf0, kf1, kf2, kf3);
 		
 		timeline.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
-			incrementScore(logoIndex, logoView);
+			Transform transform = logoView.getLocalToSceneTransform();
+			
+			getChildren().remove(logoView);
+			
+			BalloonsGame.game.animateBalloon(logoIndex, logoView, transform);
 		}});
 		
 		setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent event) {
@@ -69,16 +73,11 @@ public class Balloon extends Parent {
 				alive = false;
 				timeline.play();
 				Resources.pop.play();
+				
+				Transform transform = logoView.getLocalToSceneTransform();
+				BalloonsGame.game.incrementScore(logoIndex, transform);
 			}
 		}});
-	}
-	
-	private void incrementScore(int logoIndex, ImageView logoView) {
-		Transform transform = logoView.getLocalToSceneTransform();
-		
-		getChildren().remove(logoView);
-		
-		BalloonsGame.game.hitBalloon(logoIndex, logoView, transform);
 	}
 	
 	public boolean isAlive() {
