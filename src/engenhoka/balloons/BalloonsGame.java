@@ -15,6 +15,8 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -108,8 +110,8 @@ public class BalloonsGame extends Application {
 		balloonsTimeline.getKeyFrames().add(kf);
 		
 		changeState(GameState.MENU);
-		changeState(GameState.PLAYING);
-		changeState(GameState.WINNING);
+		//changeState(GameState.PLAYING);
+		//changeState(GameState.WINNING);
 		
 		stage.show();
 	}
@@ -274,14 +276,35 @@ public class BalloonsGame extends Application {
 		playButton.translateYProperty().bind(scene.heightProperty().divide(2).subtract(playButton.heightProperty().divide(2)));
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
 		
+		menu.getChildren().add(playButton);
+		
+		final ToggleGroup group = new ToggleGroup();
+
+		final RadioButton easyRadioButton = new RadioButton("Easy");
+		easyRadioButton.setToggleGroup(group);
+		easyRadioButton.setSelected(true);
+		easyRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+		easyRadioButton.translateXProperty().bind(playButton.translateXProperty());
+		easyRadioButton.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
+
+		final RadioButton hardRadioButton = new RadioButton("Hard");
+		hardRadioButton.setToggleGroup(group);
+		hardRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+		hardRadioButton.translateXProperty().bind(easyRadioButton.translateXProperty());
+		hardRadioButton.translateYProperty().bind(easyRadioButton.translateYProperty().subtract(-40));
+		
+		menu.getChildren().add(easyRadioButton);
+		menu.getChildren().add(hardRadioButton);
+
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
 			changeState(GameState.PLAYING);
+			hardMode = hardRadioButton.isSelected();
 		}});
-		
-		menu.getChildren().add(playButton);
 		
 		return menu;
 	}
+	
+	private boolean hardMode = false;
 
 	private void createBalloon() {
 		bonusCount++;
@@ -294,7 +317,9 @@ public class BalloonsGame extends Application {
 			bonusCount = 0;
 		}
 		
-		Balloon balloon = new Balloon(colorIndex, logoIndex, velocity, state != GameState.WINNING, currentTimestamp);
+		//Balloon balloon = new Balloon(colorIndex, logoIndex, velocity, state != GameState.WINNING, currentTimestamp);
+		double speed = hardMode ? velocity * 2 : velocity;
+		Balloon balloon = new Balloon(colorIndex, logoIndex, speed, state != GameState.WINNING, currentTimestamp);
 		
 		balloon.setScaleX(BALLOON_SCALE_X);
 		balloon.setScaleY(BALLOON_SCALE_Y);

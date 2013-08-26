@@ -21,7 +21,7 @@ public class Credits extends Parent {
 		
 		getChildren().add(engenhoka);
 		
-		Text emails = new Text("neris.marrony@gmail.com\ndudu.email@gmail.com");
+		Text emails = new Text("neris.marrony@gmail.com\neduardo@bruno.etc.br");
 		emails.setFont(font);
 		emails.setFill(Color.WHITE);
 		emails.setStroke(Color.BLACK);
