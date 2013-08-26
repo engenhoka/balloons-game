@@ -108,6 +108,8 @@ public class BalloonsGame extends Application {
 		balloonsTimeline.getKeyFrames().add(kf);
 		
 		changeState(GameState.MENU);
+		changeState(GameState.PLAYING);
+		changeState(GameState.WINNING);
 		
 		stage.show();
 	}
@@ -171,6 +173,11 @@ public class BalloonsGame extends Application {
 		iwatinha.setTranslateX(10);
 		iwatinha.setTranslateY(250);
 		group.getChildren().add(iwatinha);
+		
+		Credits credits = new Credits();
+		credits.setTranslateX(280);
+		credits.setTranslateY(450);
+		group.getChildren().add(credits);
 
 		return group;
 	}
@@ -203,6 +210,11 @@ public class BalloonsGame extends Application {
 		iwatinha.setTranslateX(10);
 		iwatinha.setTranslateY(250);
 		group.getChildren().add(iwatinha);
+		
+		Credits credits = new Credits();
+		credits.setTranslateX(280);
+		credits.setTranslateY(450);
+		group.getChildren().add(credits);
 		
 		return group;
 	}

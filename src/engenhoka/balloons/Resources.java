@@ -4,6 +4,8 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 
 public class Resources {
+	public final static Image engenhoka = new Image(Resources.class.getResourceAsStream("engenhoka.png"));
+	
 	public final static Image iwatinha = new Image(Resources.class.getResourceAsStream("logos/iwatinha.png"));
 	public final static Image iwatinha_happy = new Image(Resources.class.getResourceAsStream("iwatinha-happy.png"));
 	public final static Image iwatinha_sad = new Image(Resources.class.getResourceAsStream("iwatinha-sad.png"));
