@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class BalloonsGame extends Application {
+	private static final int LOGO_SHOLD_BE_REMOVED = 0x8000;
 	private static final int BONUS_INDEX = Resources.LOGO_COUNT;
 	private static final int INITIAL_VELOCITY = 350;
 	private static final int LOGO_HEIGHT = 114;
@@ -60,6 +61,7 @@ public class BalloonsGame extends Application {
 	private Scene scene;
 
 	private int bonusCount;
+	private long currentTimestamp;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -92,8 +94,6 @@ public class BalloonsGame extends Application {
 		logo.setScaleY(0.4);
 		logo.setTranslateX(340);
 		logo.setTranslateY(590);
-//		logo.translateXProperty().bind(scene.widthProperty().subtract(200));
-//		logo.translateYProperty().bind(scene.heightProperty().subtract(100));
 		
 		root.getChildren().add(logo);
 		
@@ -113,6 +113,9 @@ public class BalloonsGame extends Application {
 	}
 	
 	private void changeState(GameState newState) {
+		if(currentScene != null)
+			currentScene.getChildren().clear();
+		
 		root.getChildren().remove(currentScene);
 		
 		switch(newState) {
@@ -151,19 +154,24 @@ public class BalloonsGame extends Application {
 		text.setFont(Font.font("Verdana", FontWeight.BOLD, 90));
 		text.setFill(Color.WHITE);
 		text.setStroke(Color.BLACK);
-		text.translateXProperty().bind(scene.widthProperty().divide(2).subtract(text.getLayoutBounds().getWidth() / 2));
-		text.translateYProperty().bind(scene.heightProperty().divide(2).subtract(text.getLayoutBounds().getHeight() / 2));
+		text.setTranslateX(70);
+		text.setTranslateY(240);
 		group.getChildren().add(text);
 		
 		final Button playButton = new Button("Jogar novamente");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
-		playButton.translateXProperty().bind(scene.widthProperty().divide(2).subtract(playButton.widthProperty().divide(2)));
-		playButton.translateYProperty().bind(scene.heightProperty().divide(2));
+		playButton.setTranslateX(260);
+		playButton.setTranslateY(300);
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
 			changeState(GameState.PLAYING);
 		}});
 		group.getChildren().add(playButton);
 		
+		ImageView iwatinha = new ImageView(Resources.iwatinha_sad);
+		iwatinha.setTranslateX(10);
+		iwatinha.setTranslateY(250);
+		group.getChildren().add(iwatinha);
+
 		return group;
 	}
 
@@ -178,20 +186,23 @@ public class BalloonsGame extends Application {
 		text.setFont(Font.font("Verdana", FontWeight.BOLD, 110));
 		text.setFill(Color.WHITE);
 		text.setStroke(Color.BLACK);
-		text.translateXProperty().bind(scene.widthProperty().divide(2).subtract(text.getLayoutBounds().getWidth() / 2));
-		text.translateYProperty().bind(scene.heightProperty().divide(2).subtract(text.getLayoutBounds().getHeight() / 2));
+		text.setTranslateX(70);
+		text.setTranslateY(250);
 		group.getChildren().add(text);
 		
 		final Button playButton = new Button("Jogar novamente");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
-		playButton.translateXProperty().bind(scene.widthProperty().divide(2).subtract(playButton.widthProperty().divide(2)));
-		playButton.translateYProperty().bind(scene.heightProperty().divide(2));
+		playButton.setTranslateX(260);
+		playButton.setTranslateY(300);
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
 			changeState(GameState.PLAYING);
 		}});
 		group.getChildren().add(playButton);
 		
-		//TODO colocar o iwatinha neste momento
+		ImageView iwatinha = new ImageView(Resources.iwatinha_happy);
+		iwatinha.setTranslateX(10);
+		iwatinha.setTranslateY(250);
+		group.getChildren().add(iwatinha);
 		
 		return group;
 	}
@@ -199,6 +210,7 @@ public class BalloonsGame extends Application {
 	private Group startGame() {
 		Group group = new Group();
 		
+		currentTimestamp = System.currentTimeMillis();
 		countDown = MAX_TIME;
 		velocity = INITIAL_VELOCITY;
 		Arrays.fill(score, 0);
@@ -270,7 +282,7 @@ public class BalloonsGame extends Application {
 			bonusCount = 0;
 		}
 		
-		Balloon balloon = new Balloon(colorIndex, logoIndex, velocity, state != GameState.WINNING);
+		Balloon balloon = new Balloon(colorIndex, logoIndex, velocity, state != GameState.WINNING, currentTimestamp);
 		
 		balloon.setScaleX(BALLOON_SCALE_X);
 		balloon.setScaleY(BALLOON_SCALE_Y);
@@ -300,14 +312,15 @@ public class BalloonsGame extends Application {
 			balloon.setTranslateY(balloon.getTranslateY() - balloon.getVelocity()*DELTA_TIME);
 
 			if(balloon.getTranslateY()+balloon.getBoundsInLocal().getHeight() < 0) {
-				root.getChildren().remove(balloon);
+				currentScene.getChildren().remove(balloon);
 				iterator.remove();
 			}
 		}
 	}
 
-	public void animateBalloon(final int logoIndex, final ImageView logoView, final Transform transform) {
+	public void animateBalloon(final int logoIndex, final ImageView logoView, final Transform transform, long gameTimestamp) {
 		if(state != GameState.PLAYING) return;
+		if(currentTimestamp != gameTimestamp) return; //workaround
 		
 		double sx = transform.getMxx();
 		double sy = transform.getMyy();
@@ -338,8 +351,12 @@ public class BalloonsGame extends Application {
 		}
 		
 		timeline.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
-			if(logoIndex == BONUS_INDEX || score[logoIndex] > 1) {
+			if(logoIndex == BONUS_INDEX)
 				currentScene.getChildren().remove(logoView);
+			else if(score[logoIndex] > 0) {
+				if((score[logoIndex] & LOGO_SHOLD_BE_REMOVED) != 0)
+					currentScene.getChildren().remove(logoView);
+				score[logoIndex] |= LOGO_SHOLD_BE_REMOVED;
 			}
 		}});
 		
@@ -353,11 +370,9 @@ public class BalloonsGame extends Application {
 		timeline.play();
 	}
 
-	public void incrementScore(int logoIndex, Transform transform) {
+	public void incrementScore(int logoIndex, Transform transform, long gameTimestamp) {
 		if(state != GameState.PLAYING) return;
 		
-		double sx = transform.getMxx();
-		double sy = transform.getMyy();
 		double tx = transform.getTx();
 		double ty = transform.getTy();
 		

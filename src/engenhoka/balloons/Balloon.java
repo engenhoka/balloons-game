@@ -17,7 +17,7 @@ public class Balloon extends Parent {
 	private double velocity;
 	private boolean alive;
 
-	public Balloon(int colorIndex, final int logoIndex, double velocity, boolean alive0) {
+	public Balloon(int colorIndex, final int logoIndex, double velocity, boolean alive0, final long gameTimestamp) {
 		this.velocity = velocity;
 		this.alive = alive0;
 		
@@ -65,7 +65,7 @@ public class Balloon extends Parent {
 			
 			getChildren().remove(logoView);
 			
-			BalloonsGame.game.animateBalloon(logoIndex, logoView, transform);
+			BalloonsGame.game.animateBalloon(logoIndex, logoView, transform, gameTimestamp);
 		}});
 		
 		setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent event) {
@@ -75,7 +75,7 @@ public class Balloon extends Parent {
 				Resources.pop.play();
 				
 				Transform transform = logoView.getLocalToSceneTransform();
-				BalloonsGame.game.incrementScore(logoIndex, transform);
+				BalloonsGame.game.incrementScore(logoIndex, transform, gameTimestamp);
 			}
 		}});
 	}
