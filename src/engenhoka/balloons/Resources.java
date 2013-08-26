@@ -19,7 +19,7 @@ public class Resources {
 	public final static Image[] balloons = new Image[colors.length];
 	public final static Image[] pows = new Image[colors.length];
 
-	public static final int LOGO_COUNT = 8;
+	public static final int LOGO_COUNT = 11;
 	public final static Image[] logos = new Image[LOGO_COUNT+1];
 	
 	static {
