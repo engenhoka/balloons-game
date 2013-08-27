@@ -10,6 +10,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -194,10 +195,14 @@ public class BalloonsGame extends Application {
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
 		playButton.setTranslateX(260);
 		playButton.setTranslateY(300);
+		group.getChildren().add(playButton);
+		
+		final BooleanProperty hardModeSelected = showModes(group, playButton, 150);
+		
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
 			changeState(GameState.PLAYING);
+			hardMode = hardModeSelected.get();
 		}});
-		group.getChildren().add(playButton);
 		
 		ImageView iwatinha = new ImageView(Resources.iwatinha_sad);
 		iwatinha.setTranslateX(10);
@@ -210,6 +215,29 @@ public class BalloonsGame extends Application {
 		group.getChildren().add(credits);
 
 		return group;
+	}
+
+	private BooleanProperty showModes(Group group, final Button playButton, double xAxisDeviation) {
+		final ToggleGroup tgroup = new ToggleGroup();
+
+		final RadioButton easyRadioButton = new RadioButton("Easy");
+		easyRadioButton.setToggleGroup(tgroup);
+		easyRadioButton.setSelected(!hardMode);
+		easyRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+		easyRadioButton.translateXProperty().bind(playButton.translateXProperty().add(xAxisDeviation));
+		easyRadioButton.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
+
+		final RadioButton hardRadioButton = new RadioButton("Hard");
+		hardRadioButton.setToggleGroup(tgroup);
+		hardRadioButton.setSelected(hardMode);
+		hardRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+		hardRadioButton.translateXProperty().bind(easyRadioButton.translateXProperty());
+		hardRadioButton.translateYProperty().bind(easyRadioButton.translateYProperty().subtract(-40));
+		
+		group.getChildren().add(easyRadioButton);
+		group.getChildren().add(hardRadioButton);
+		
+		return hardRadioButton.selectedProperty();
 	}
 
 	private Group winningGame() {
@@ -306,27 +334,11 @@ public class BalloonsGame extends Application {
 		
 		menu.getChildren().add(playButton);
 		
-		final ToggleGroup group = new ToggleGroup();
-
-		final RadioButton easyRadioButton = new RadioButton("Easy");
-		easyRadioButton.setToggleGroup(group);
-		easyRadioButton.setSelected(true);
-		easyRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-		easyRadioButton.translateXProperty().bind(playButton.translateXProperty());
-		easyRadioButton.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
-
-		final RadioButton hardRadioButton = new RadioButton("Hard");
-		hardRadioButton.setToggleGroup(group);
-		hardRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-		hardRadioButton.translateXProperty().bind(easyRadioButton.translateXProperty());
-		hardRadioButton.translateYProperty().bind(easyRadioButton.translateYProperty().subtract(-40));
-		
-		menu.getChildren().add(easyRadioButton);
-		menu.getChildren().add(hardRadioButton);
+		final BooleanProperty hardModeSelected = showModes(menu, playButton, 10);
 
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
 			changeState(GameState.PLAYING);
-			hardMode = hardRadioButton.isSelected();
+			hardMode = hardModeSelected.get();
 		}});
 		
 		return menu;
