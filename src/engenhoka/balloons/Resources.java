@@ -35,6 +35,19 @@ public class Resources {
 			logos[i] = new Image(Resources.class.getResourceAsStream(String.format("logos/logo-%02d.jpg", i+1)));
 		
 		logos[LOGO_COUNT] = iwatinha;
+		
+		initAudio(pop);
+		initAudio(applause);
+		initAudio(trumpet);
+	}
+
+	private static void initAudio(AudioClip audioClip) {
+		double volume = audioClip.getVolume();
+		
+		audioClip.setVolume(0);
+		audioClip.play();
+		audioClip.setVolume(volume);
+		
 	}
 }
 
