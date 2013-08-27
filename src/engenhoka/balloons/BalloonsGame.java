@@ -9,6 +9,7 @@ import java.util.Random;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
@@ -20,8 +21,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -224,6 +227,7 @@ public class BalloonsGame extends Application {
 		final RadioButton easyRadioButton = new RadioButton("Easy");
 		easyRadioButton.setToggleGroup(tgroup);
 		easyRadioButton.setSelected(!hardMode);
+		easyRadioButton.setVisible(false);
 		easyRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 		easyRadioButton.translateXProperty().bind(playButton.translateXProperty().add(xAxisDeviation));
 		easyRadioButton.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
@@ -231,12 +235,37 @@ public class BalloonsGame extends Application {
 		final RadioButton hardRadioButton = new RadioButton("Hard");
 		hardRadioButton.setToggleGroup(tgroup);
 		hardRadioButton.setSelected(hardMode);
+		hardRadioButton.setVisible(false);
 		hardRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
 		hardRadioButton.translateXProperty().bind(easyRadioButton.translateXProperty());
 		hardRadioButton.translateYProperty().bind(easyRadioButton.translateYProperty().subtract(-40));
 		
 		group.getChildren().add(easyRadioButton);
 		group.getChildren().add(hardRadioButton);
+		
+		final Rectangle hiddenSquare = new Rectangle(300, 300);
+		hiddenSquare.setFill(Color.BLUE);
+		hiddenSquare.setOpacity(.3);
+		hiddenSquare.translateXProperty().bind(scene.widthProperty().subtract(305));
+		hiddenSquare.translateYProperty().bind(scene.heightProperty().subtract(305));
+		
+		hiddenSquare.setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent evt) {
+			if(evt.getButton().equals(MouseButton.PRIMARY)){
+	            if(evt.getClickCount() >= 2) {
+	            	easyRadioButton.setVisible(!easyRadioButton.isVisible());
+	            	hardRadioButton.setVisible(!hardRadioButton.isVisible());
+	            }
+	        }
+		}});
+		
+		TimelineBuilder
+			.create()
+			.keyFrames(new KeyFrame(Duration.millis(1250), new KeyValue(hiddenSquare.opacityProperty(), 0)))
+			.cycleCount(1)
+			.build()
+			.play();
+		
+		group.getChildren().add(hiddenSquare);
 		
 		return hardRadioButton.selectedProperty();
 	}
