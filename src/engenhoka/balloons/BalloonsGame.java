@@ -184,7 +184,7 @@ public class BalloonsGame extends Application {
 		
 		Group group = new Group();
 		
-		Text text = new Text("Não foi desta vez!!");
+		Text text = new Text("N\u00E3o foi desta vez!!");
 		text.setFont(Font.font("Verdana", FontWeight.BOLD, 90));
 		text.setFill(Color.WHITE);
 		text.setStroke(Color.BLACK);
@@ -248,7 +248,7 @@ public class BalloonsGame extends Application {
 		
 		Group group = new Group();
 		
-		Text text = new Text("Você ganhou!!");
+		Text text = new Text("Voc\u00EA ganhou!!");
 		text.setFont(Font.font("Verdana", FontWeight.BOLD, 110));
 		text.setFill(Color.WHITE);
 		text.setStroke(Color.BLACK);
