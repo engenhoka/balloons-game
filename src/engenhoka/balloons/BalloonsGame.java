@@ -12,12 +12,15 @@ import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
@@ -74,7 +77,7 @@ public class BalloonsGame extends Application {
 	}
 	
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(final Stage stage) throws Exception {
 		game = this;
 		
 		stage.setTitle("Balloons Game");
@@ -84,6 +87,12 @@ public class BalloonsGame extends Application {
 		stage.setResizable(false);
 		stage.setFullScreen(true);
 		stage.getIcons().add(Resources.icon);
+		
+		// force fullScreen !!!
+		stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() { @Override public void changed(ObservableValue<? extends Boolean> observable,	Boolean oldValue, Boolean newValue) {
+			if (!newValue)
+				stage.setFullScreen(true);
+		}});
 
 		root = new Group();
 		scene = new Scene(root);
@@ -224,24 +233,27 @@ public class BalloonsGame extends Application {
 	private BooleanProperty showModes(Group group, final Button playButton, double xAxisDeviation) {
 		final ToggleGroup tgroup = new ToggleGroup();
 
-		final RadioButton easyRadioButton = new RadioButton("Easy");
-		easyRadioButton.setToggleGroup(tgroup);
-		easyRadioButton.setSelected(!hardMode);
-		easyRadioButton.setVisible(false);
-		easyRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-		easyRadioButton.translateXProperty().bind(playButton.translateXProperty().add(xAxisDeviation));
-		easyRadioButton.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
+		//final RadioButton easyRadioButton = new RadioButton("Easy");
+		final ToggleButton easy = new ToggleButton();
+		easy.setToggleGroup(tgroup);
+		easy.setMinSize(100, 50);
+		easy.setStyle("-fx-base: lightgreen;");
+		easy.setSelected(!hardMode);
+		easy.setVisible(false);
+		easy.translateXProperty().bind(playButton.translateXProperty().add(xAxisDeviation));
+		easy.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
 
-		final RadioButton hardRadioButton = new RadioButton("Hard");
-		hardRadioButton.setToggleGroup(tgroup);
-		hardRadioButton.setSelected(hardMode);
-		hardRadioButton.setVisible(false);
-		hardRadioButton.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-		hardRadioButton.translateXProperty().bind(easyRadioButton.translateXProperty());
-		hardRadioButton.translateYProperty().bind(easyRadioButton.translateYProperty().subtract(-40));
+		final ToggleButton hard = new ToggleButton();
+		hard.setToggleGroup(tgroup);
+		hard.setMinSize(100, 50);
+		hard.setStyle("-fx-base: red;");
+		hard.setSelected(hardMode);
+		hard.setVisible(false);
+		hard.translateXProperty().bind(easy.translateXProperty().add(120));
+		hard.translateYProperty().bind(easy.translateYProperty());
 		
-		group.getChildren().add(easyRadioButton);
-		group.getChildren().add(hardRadioButton);
+		group.getChildren().add(easy);
+		group.getChildren().add(hard);
 		
 		final Rectangle hiddenSquare = new Rectangle(300, 300);
 		hiddenSquare.setFill(Color.BLUE);
@@ -252,8 +264,8 @@ public class BalloonsGame extends Application {
 		hiddenSquare.setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent evt) {
 			if(evt.getButton().equals(MouseButton.PRIMARY)){
 	            if(evt.getClickCount() >= 2) {
-	            	easyRadioButton.setVisible(!easyRadioButton.isVisible());
-	            	hardRadioButton.setVisible(!hardRadioButton.isVisible());
+	            	easy.setVisible(!easy.isVisible());
+	            	hard.setVisible(!hard.isVisible());
 	            }
 	        }
 		}});
@@ -267,7 +279,7 @@ public class BalloonsGame extends Application {
 		
 		group.getChildren().add(hiddenSquare);
 		
-		return hardRadioButton.selectedProperty();
+		return hard.selectedProperty();
 	}
 
 	private Group winningGame() {
