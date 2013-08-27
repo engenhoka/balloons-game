@@ -78,8 +78,7 @@ public class BalloonsGame extends Application {
 		stage.setWidth(1024);
 		stage.setHeight(768);
 		stage.setResizable(false);
-		
-		//stage.setFullScreen(true);
+//		stage.setFullScreen(true);
 
 		root = new Group();
 		scene = new Scene(root);
@@ -109,9 +108,7 @@ public class BalloonsGame extends Application {
 		
 		balloonsTimeline.getKeyFrames().add(kf);
 		
-		changeState(GameState.MENU);
-		//changeState(GameState.PLAYING);
-		//changeState(GameState.WINNING);
+		changeState(GameState.INTRO);
 		
 		stage.show();
 	}
@@ -123,6 +120,10 @@ public class BalloonsGame extends Application {
 		root.getChildren().remove(currentScene);
 		
 		switch(newState) {
+		case INTRO:
+			currentScene = createIntro();
+			break;
+			
 		case MENU:
 			currentScene = createMenu();
 			break;
@@ -145,6 +146,33 @@ public class BalloonsGame extends Application {
 		
 		state = newState;
 		root.getChildren().add(currentScene);
+	}
+
+	private Group createIntro() {
+		Group group = new Group();
+		
+		ImageView engenhoka = new ImageView(Resources.engenhoka);
+		engenhoka.translateXProperty().bind(scene.widthProperty().divide(2).subtract(Resources.engenhoka.getWidth() / 2));
+		engenhoka.translateYProperty().bind(scene.heightProperty().divide(2).subtract(Resources.engenhoka.getHeight() / 2));
+		engenhoka.setOpacity(0);
+		group.getChildren().add(engenhoka);
+		
+		Timeline timeline = new Timeline();
+		timeline.setCycleCount(1);
+		
+		KeyFrame kf0 = new KeyFrame(Duration.millis(3000), new KeyValue(engenhoka.opacityProperty(), 1));
+		KeyFrame kf1 = new KeyFrame(Duration.millis(6000), new KeyValue(engenhoka.opacityProperty(), 1));
+		KeyFrame kf2 = new KeyFrame(Duration.millis(7000), new KeyValue(engenhoka.opacityProperty(), 0));
+		
+		timeline.getKeyFrames().addAll(kf0, kf1, kf2);
+		
+		timeline.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
+			changeState(GameState.MENU);
+		}});
+		
+		timeline.play();
+		
+		return group;
 	}
 
 	private Group loseGame() {
