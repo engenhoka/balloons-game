@@ -197,7 +197,7 @@ public class BalloonsGame extends Application {
 		playButton.setTranslateY(300);
 		group.getChildren().add(playButton);
 		
-		final BooleanProperty hardModeSelected = showModes(group, playButton, 150);
+		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
 		
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
 			changeState(GameState.PLAYING);
@@ -211,7 +211,7 @@ public class BalloonsGame extends Application {
 		
 		Credits credits = new Credits();
 		credits.setTranslateX(280);
-		credits.setTranslateY(450);
+		credits.setTranslateY(500);
 		group.getChildren().add(credits);
 
 		return group;
@@ -264,6 +264,13 @@ public class BalloonsGame extends Application {
 		}});
 		group.getChildren().add(playButton);
 		
+		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
+		
+		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
+			changeState(GameState.PLAYING);
+			hardMode = hardModeSelected.get();
+		}});
+		
 		ImageView iwatinha = new ImageView(Resources.iwatinha_happy);
 		iwatinha.setTranslateX(10);
 		iwatinha.setTranslateY(250);
@@ -271,7 +278,7 @@ public class BalloonsGame extends Application {
 		
 		Credits credits = new Credits();
 		credits.setTranslateX(280);
-		credits.setTranslateY(450);
+		credits.setTranslateY(500);
 		group.getChildren().add(credits);
 		
 		return group;
