@@ -79,7 +79,7 @@ public class BalloonsGame extends Application {
 		stage.setWidth(1024);
 		stage.setHeight(768);
 		stage.setResizable(false);
-//		stage.setFullScreen(true);
+		stage.setFullScreen(true);
 
 		root = new Group();
 		scene = new Scene(root);
