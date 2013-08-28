@@ -1,6 +1,6 @@
 # balloons-game
 
-### Deploying native bundle for Windows with icons
+### Deploying native bundle with icons for Windows
 
 Open `build.xml` and find the path `fxant`. Add one line for the `${basedir}` (will make our installer icons available):
 
