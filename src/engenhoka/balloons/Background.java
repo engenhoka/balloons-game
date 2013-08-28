@@ -16,6 +16,14 @@ public class Background extends Parent {
 	private DoubleProperty height;
 	private ImageView background;
 	
+	public DoubleProperty ssX() {
+		return background.scaleXProperty();
+	}
+	
+	public DoubleProperty ssY() {
+		return background.scaleYProperty();
+	}
+	
 	public DoubleProperty widthProperty() {
 		if(width == null) {
 			width = new SimpleDoubleProperty();

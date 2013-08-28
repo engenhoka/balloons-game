@@ -9,7 +9,6 @@ import java.util.Random;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -19,7 +18,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.InnerShadow;
@@ -99,16 +97,19 @@ public class BalloonsGame extends Application {
 		scene.setFill(Color.BLUE);
 		stage.setScene(scene);
 		
-		Background background = new Background();
+		background = new Background();
 		background.widthProperty().bind(scene.widthProperty());
 		background.heightProperty().bind(scene.heightProperty());
 		root.getChildren().add(background);
 		
 		final ImageView logo = new ImageView(Resources.logo);
-		logo.setScaleX(0.4);
-		logo.setScaleY(0.4);
-		logo.setTranslateX(340);
-		logo.setTranslateY(590);
+		final double logoScale = 0.6;
+		logo.setScaleX(logoScale);
+		logo.setScaleY(logoScale);
+		logo.translateXProperty().bind(scene.widthProperty().divide(2).subtract(Resources.logo.getWidth() * 0.5));
+		logo.translateYProperty().bind(scene.heightProperty().subtract(Resources.logo.getHeight() * logoScale + Resources.logo.getHeight() * logoScale * 0.5));
+		logo.setDisable(true);
+		logo.setMouseTransparent(true);
 		
 		root.getChildren().add(logo);
 		
@@ -204,7 +205,7 @@ public class BalloonsGame extends Application {
 		text.setTranslateY(240);
 		group.getChildren().add(text);
 		
-		final Button playButton = new Button("Jogar novamente");
+		final Button playButton = new Button("Voltar");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
 		playButton.setTranslateX(260);
 		playButton.setTranslateY(300);
@@ -213,7 +214,7 @@ public class BalloonsGame extends Application {
 		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
 		
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
-			changeState(GameState.PLAYING);
+			changeState(GameState.MENU);
 			hardMode = hardModeSelected.get();
 		}});
 		
@@ -223,8 +224,8 @@ public class BalloonsGame extends Application {
 		group.getChildren().add(iwatinha);
 		
 		Credits credits = new Credits();
-		credits.setTranslateX(280);
-		credits.setTranslateY(500);
+		credits.translateXProperty().bind(scene.widthProperty().subtract(400));
+		credits.translateYProperty().bind(scene.heightProperty().subtract(250));
 		group.getChildren().add(credits);
 
 		return group;
@@ -255,27 +256,21 @@ public class BalloonsGame extends Application {
 		group.getChildren().add(easy);
 		group.getChildren().add(hard);
 		
-		final Rectangle hiddenSquare = new Rectangle(300, 300);
+		final Rectangle hiddenSquare = new Rectangle(100, 110);
 		hiddenSquare.setFill(Color.BLUE);
-		hiddenSquare.setOpacity(.3);
-		hiddenSquare.translateXProperty().bind(scene.widthProperty().subtract(305));
-		hiddenSquare.translateYProperty().bind(scene.heightProperty().subtract(305));
+		hiddenSquare.setOpacity(0);
+		
+		hiddenSquare.translateYProperty().bind(background.ssY().multiply(380));
+		hiddenSquare.scaleYProperty().bind(background.ssY());
 		
 		hiddenSquare.setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent evt) {
-			if(evt.getButton().equals(MouseButton.PRIMARY)){
+			if(evt.getButton().equals(MouseButton.PRIMARY)) {
 	            if(evt.getClickCount() >= 2) {
 	            	easy.setVisible(!easy.isVisible());
 	            	hard.setVisible(!hard.isVisible());
 	            }
 	        }
 		}});
-		
-		TimelineBuilder
-			.create()
-			.keyFrames(new KeyFrame(Duration.millis(1250), new KeyValue(hiddenSquare.opacityProperty(), 0)))
-			.cycleCount(1)
-			.build()
-			.play();
 		
 		group.getChildren().add(hiddenSquare);
 		
@@ -297,19 +292,16 @@ public class BalloonsGame extends Application {
 		text.setTranslateY(250);
 		group.getChildren().add(text);
 		
-		final Button playButton = new Button("Jogar novamente");
+		final Button playButton = new Button("Voltar");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
 		playButton.setTranslateX(260);
 		playButton.setTranslateY(300);
-		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
-			changeState(GameState.PLAYING);
-		}});
 		group.getChildren().add(playButton);
 		
 		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
 		
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
-			changeState(GameState.PLAYING);
+			changeState(GameState.MENU);
 			hardMode = hardModeSelected.get();
 		}});
 		
@@ -319,8 +311,8 @@ public class BalloonsGame extends Application {
 		group.getChildren().add(iwatinha);
 		
 		Credits credits = new Credits();
-		credits.setTranslateX(280);
-		credits.setTranslateY(500);
+		credits.translateXProperty().bind(scene.widthProperty().subtract(400));
+		credits.translateYProperty().bind(scene.heightProperty().subtract(250));
 		group.getChildren().add(credits);
 		
 		return group;
@@ -376,7 +368,7 @@ public class BalloonsGame extends Application {
 	private Group createMenu() {
 		Group menu = new Group();
 		
-		final Button playButton = new Button("Jogar");
+		final Button playButton = new Button("Vamos começar");
 		playButton.translateXProperty().bind(scene.widthProperty().divide(2).subtract(playButton.widthProperty().divide(2)));
 		playButton.translateYProperty().bind(scene.heightProperty().divide(2).subtract(playButton.heightProperty().divide(2)));
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
@@ -394,6 +386,7 @@ public class BalloonsGame extends Application {
 	}
 	
 	private boolean hardMode = false;
+	private Background background;
 
 	private void createBalloon() {
 		bonusCount++;
@@ -414,6 +407,7 @@ public class BalloonsGame extends Application {
 		balloon.setScaleY(BALLOON_SCALE_Y);
 		balloon.setTranslateY(root.getScene().getHeight());
 		balloon.setTranslateX(random.nextDouble() * (root.getScene().getWidth() - Resources.balloons[colorIndex].getWidth()));
+		balloon.autosize();
 		currentScene.getChildren().add(balloon);
 		balloons.add(balloon);
 	}

@@ -14,10 +14,10 @@ public class Credits extends Parent {
 		
 		ImageView engenhoka = new ImageView(Resources.engenhoka);
 		
-		double factorX = 0.7;
-		engenhoka.setTranslateX(Resources.engenhoka.getWidth() * -0.5 * (1 - factorX));
-		engenhoka.setScaleX(factorX);
-		engenhoka.setScaleY(factorX);
+		double scale = 0.5;
+		engenhoka.setTranslateX(Resources.engenhoka.getWidth() * -0.5 * (1 - scale));
+		engenhoka.setScaleX(scale);
+		engenhoka.setScaleY(scale);
 		
 		getChildren().add(engenhoka);
 		
