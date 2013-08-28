@@ -215,8 +215,8 @@ public class BalloonsGame extends Application {
 		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
 		
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
-			changeState(GameState.MENU);
 			hardMode = hardModeSelected.get();
+			changeState(GameState.MENU);
 		}});
 		
 		ImageView iwatinha = new ImageView(Resources.iwatinha_sad);
@@ -244,6 +244,7 @@ public class BalloonsGame extends Application {
 		easy.setVisible(false);
 		easy.translateXProperty().bind(playButton.translateXProperty().add(xAxisDeviation));
 		easy.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
+		
 
 		final ToggleButton hard = new ToggleButton();
 		hard.setToggleGroup(tgroup);
@@ -253,6 +254,13 @@ public class BalloonsGame extends Application {
 		hard.setVisible(false);
 		hard.translateXProperty().bind(easy.translateXProperty().add(120));
 		hard.translateYProperty().bind(easy.translateYProperty());
+		
+		easy.setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent evt) {
+			hard.setSelected(!easy.isSelected());
+		}});
+		hard.setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent evt) {
+			easy.setSelected(!hard.isSelected());
+		}});
 		
 		group.getChildren().add(easy);
 		group.getChildren().add(hard);
@@ -302,8 +310,8 @@ public class BalloonsGame extends Application {
 		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
 		
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
-			changeState(GameState.MENU);
 			hardMode = hardModeSelected.get();
+			changeState(GameState.MENU);
 		}});
 		
 		ImageView iwatinha = new ImageView(Resources.iwatinha_happy);
@@ -363,13 +371,15 @@ public class BalloonsGame extends Application {
 		clockTimeline.play();
 		balloonsTimeline.play();
 		
+		System.out.println("Playing level " + (hardMode ? "HARD" : "EASY"));
+		
 		return group;
 	}
 
 	private Group createMenu() {
 		Group menu = new Group();
 		
-		final Button playButton = new Button("Vamos começar");
+		final Button playButton = new Button("Vamos come\u00E7ar");
 		playButton.translateXProperty().bind(scene.widthProperty().divide(2).subtract(playButton.widthProperty().divide(2)));
 		playButton.translateYProperty().bind(scene.heightProperty().divide(2).subtract(playButton.heightProperty().divide(2)));
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
@@ -379,8 +389,8 @@ public class BalloonsGame extends Application {
 		final BooleanProperty hardModeSelected = showModes(menu, playButton, 10);
 
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent e) {
-			changeState(GameState.PLAYING);
 			hardMode = hardModeSelected.get();
+			changeState(GameState.PLAYING);
 		}});
 		
 		return menu;
