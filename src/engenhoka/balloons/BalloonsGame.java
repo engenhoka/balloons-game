@@ -36,14 +36,15 @@ import javafx.util.Duration;
 public class BalloonsGame extends Application {
 	private static final int LOGO_SHOLD_BE_REMOVED = 0x8000;
 	private static final int BONUS_INDEX = Resources.LOGO_COUNT;
-	private static final int INITIAL_VELOCITY = 350;
+	private static final int INITIAL_VELOCITY = 550;
 	private static final int LOGO_HEIGHT = 114;
 	private static final int LOGO_WIDTH = 261;
 	private static final int MAX_TIME = 30;
 	private static final double BALLOON_SCALE_Y = 0.5;
 	private static final double BALLOON_SCALE_X = 0.5;
 
-	private static final double DELTA_TIME = 0.03333;
+	private static final double TIME_MILLIS = 20.0;
+	private static final double DELTA_TIME = TIME_MILLIS / 1000.0;
 	
 	public static BalloonsGame game;
 	
@@ -116,7 +117,7 @@ public class BalloonsGame extends Application {
 		balloonsTimeline = new Timeline();
 		balloonsTimeline.setCycleCount(Timeline.INDEFINITE);
 		
-		KeyFrame kf = new KeyFrame(Duration.millis(33.33), new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
+		KeyFrame kf = new KeyFrame(Duration.millis(TIME_MILLIS), new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent event) {
 			update();
 			logo.toFront();
 		}});
@@ -400,7 +401,7 @@ public class BalloonsGame extends Application {
 		}
 		
 		//Balloon balloon = new Balloon(colorIndex, logoIndex, velocity, state != GameState.WINNING, currentTimestamp);
-		double speed = hardMode ? velocity * 2 : velocity;
+		double speed = hardMode ? velocity * 1.2 : velocity;
 		Balloon balloon = new Balloon(colorIndex, logoIndex, speed, state != GameState.WINNING, currentTimestamp);
 		
 		balloon.setScaleX(BALLOON_SCALE_X);
@@ -417,8 +418,6 @@ public class BalloonsGame extends Application {
 		
 		if(timeSpan > 1.0) {
 			timeSpan = 0;
-			velocity += 2;
-			
 			createBalloon();
 		}
 		
