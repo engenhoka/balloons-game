@@ -299,46 +299,65 @@ public class BalloonsGame extends Application {
 		clockTimeline.stop();
 		balloonsTimeline.stop();
 
-		Group group = new Group();
+		final Group group = new Group();
 		
-		DropShadow dropShadow = new DropShadow();
+		final DropShadow dropShadow = new DropShadow();
 		dropShadow.setRadius(5.0);
 		dropShadow.setOffsetX(5.0);
 		dropShadow.setOffsetY(5.0);
 		dropShadow.setColor(Color.DARKOLIVEGREEN);
 		
-		Text text = new Text("Voc\u00EA ganhou!!");
+		final Text text = new Text("Voc\u00EA ganhou!!");
 		text.setFont(Font.font("Verdana", FontWeight.BOLD, 110));
 		text.setEffect(dropShadow);
 		text.setFill(Color.DARKGREEN);
 		text.setStroke(Color.BLACK);
 		center(text);
-		group.getChildren().add(text);
 		
 		final Timeline shadowTimeline = TimelineBuilder.create()
-			.cycleCount(Animation.INDEFINITE)
-			.autoReverse(true)
-			.keyFrames(new KeyFrame(Duration.seconds(3),
-					new KeyValue(dropShadow.radiusProperty(), 0),
-					new KeyValue(dropShadow.colorProperty(), Color.BLACK),
-					new KeyValue(text.fillProperty(), Color.YELLOWGREEN),
-					new KeyValue(text.strokeProperty(), Color.WHITESMOKE)
-			))
-			.build();
+				.cycleCount(Animation.INDEFINITE)
+				.autoReverse(true)
+				.keyFrames(new KeyFrame(Duration.seconds(3),
+						new KeyValue(dropShadow.radiusProperty(), 0),
+						new KeyValue(dropShadow.colorProperty(), Color.BLACK),
+						new KeyValue(text.fillProperty(), Color.YELLOWGREEN),
+						new KeyValue(text.strokeProperty(), Color.WHITESMOKE)
+						))
+						.build();
 		
-		shadowTimeline.play();
+		final ImageView balloonsWin = new ImageView(Resources.balloonsWin);
+		
+		balloonsWin.setTranslateX(random.nextDouble() * 1024);
+		balloonsWin.setTranslateY(background.heightProperty().add(Resources.balloonsWin.getHeight()).get());
 
+		final Timeline balloonsWinTimeline = TimelineBuilder.create()
+				.cycleCount(Animation.INDEFINITE)
+				.keyFrames(new KeyFrame(Duration.seconds(5),
+						new KeyValue(balloonsWin.translateYProperty(), -Resources.balloonsWin.getHeight()),
+						new KeyValue(balloonsWin.opacityProperty(), .25),
+						new KeyValue(balloonsWin.scaleXProperty(), .25),
+						new KeyValue(balloonsWin.scaleYProperty(), .25)
+				))
+				.build();
+			
 		final Button playButton = new Button("Voltar");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
 		center(playButton, 20);
+		
 		group.getChildren().add(playButton);
+		group.getChildren().add(balloonsWin);
+		group.getChildren().add(text);
+		
+		shadowTimeline.play();
+		balloonsWinTimeline.play();
 
 		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
 
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override	public void handle(MouseEvent e) {
+			shadowTimeline.stop();
+			balloonsWinTimeline.stop();
 			hardMode = hardModeSelected.get();
 			changeState(GameState.MENU);
-			shadowTimeline.stop();
 		}});
 
 		ImageView iwatinha = new ImageView(Resources.iwatinha_happy);
@@ -384,6 +403,8 @@ public class BalloonsGame extends Application {
 
 				changeState(GameState.LOSE);
 			}
+			// debug
+			// else if (countDown < 28) changeState(GameState.WINNING);
 		}});
 
 		clockTimeline = new Timeline();

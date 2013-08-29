@@ -11,6 +11,7 @@ public class Resources {
 	public final static Image iwatinha_sad = new Image(Resources.class.getResourceAsStream("iwatinha-sad.png"));
 	public final static Image logo = new Image(Resources.class.getResourceAsStream("logo.png"));
 	public final static Image icon = new Image(Resources.class.getResourceAsStream("Balloons-icon.png"));
+	public final static Image balloonsWin = new Image(Resources.class.getResourceAsStream("Balloons-win.png"));
 	
 //	public final static Image pow = new Image(Resources.class.getResourceAsStream("pow.png"));
 	public final static AudioClip pop = new AudioClip(Resources.class.getResource("pop.mp3").toString());
