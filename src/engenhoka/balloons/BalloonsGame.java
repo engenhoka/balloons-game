@@ -6,9 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -301,10 +303,10 @@ public class BalloonsGame extends Application {
 		
 		DropShadow dropShadow = new DropShadow();
 		dropShadow.setRadius(5.0);
-		dropShadow.setOffsetX(3.0);
-		dropShadow.setOffsetY(3.0);
-		dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
-
+		dropShadow.setOffsetX(5.0);
+		dropShadow.setOffsetY(5.0);
+		dropShadow.setColor(Color.DARKOLIVEGREEN);
+		
 		Text text = new Text("Voc\u00EA ganhou!!");
 		text.setFont(Font.font("Verdana", FontWeight.BOLD, 110));
 		text.setEffect(dropShadow);
@@ -312,10 +314,23 @@ public class BalloonsGame extends Application {
 		text.setStroke(Color.BLACK);
 		center(text);
 		group.getChildren().add(text);
+		
+		final Timeline shadowTimeline = TimelineBuilder.create()
+			.cycleCount(Animation.INDEFINITE)
+			.autoReverse(true)
+			.keyFrames(new KeyFrame(Duration.seconds(3),
+					new KeyValue(dropShadow.radiusProperty(), 0),
+					new KeyValue(dropShadow.colorProperty(), Color.BLACK),
+					new KeyValue(text.fillProperty(), Color.YELLOWGREEN),
+					new KeyValue(text.strokeProperty(), Color.WHITESMOKE)
+			))
+			.build();
+		
+		shadowTimeline.play();
 
 		final Button playButton = new Button("Voltar");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
-		center(playButton);
+		center(playButton, 20);
 		group.getChildren().add(playButton);
 
 		final BooleanProperty hardModeSelected = showModes(group, playButton, 30);
@@ -323,6 +338,7 @@ public class BalloonsGame extends Application {
 		playButton.setOnMousePressed(new EventHandler<MouseEvent>() { @Override	public void handle(MouseEvent e) {
 			hardMode = hardModeSelected.get();
 			changeState(GameState.MENU);
+			shadowTimeline.stop();
 		}});
 
 		ImageView iwatinha = new ImageView(Resources.iwatinha_happy);
@@ -402,8 +418,12 @@ public class BalloonsGame extends Application {
 	}
 
 	private void center(Control control) {
+		center(control, 0);
+	}
+	
+	private void center(Control control, double yDelta) {
 		control.translateXProperty().bind(scene.widthProperty().divide(2).subtract(control.widthProperty().divide(2)));
-		control.translateYProperty().bind(scene.heightProperty().divide(2).subtract(control.heightProperty().divide(2)));
+		control.translateYProperty().bind(scene.heightProperty().divide(2).subtract(control.heightProperty().divide(2)).add(yDelta));
 	}
 
 	private void center(Text control) {
