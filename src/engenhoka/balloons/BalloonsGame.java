@@ -231,7 +231,7 @@ public class BalloonsGame extends Application {
 
 		ImageView iwatinha = new ImageView(Resources.iwatinha_sad);
 		iwatinha.setTranslateX(10);
-		iwatinha.setTranslateY(250);
+		iwatinha.translateYProperty().bind(text.translateYProperty());
 		group.getChildren().add(iwatinha);
 
 		Credits credits = new Credits();
@@ -273,12 +273,11 @@ public class BalloonsGame extends Application {
 		group.getChildren().add(easy);
 		group.getChildren().add(hard);
 
-		final Rectangle hiddenSquare = new Rectangle(100, 110);
+		final Rectangle hiddenSquare = new Rectangle(100, 100);
 		hiddenSquare.setFill(Color.BLUE);
 		hiddenSquare.setOpacity(0);
 
-		hiddenSquare.translateYProperty().bind(background.ssY().multiply(380));
-		hiddenSquare.scaleYProperty().bind(background.ssY());
+		hiddenSquare.translateYProperty().bind(scene.heightProperty().subtract(100));
 
 		hiddenSquare.setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent evt) {
 			if (evt.getButton().equals(MouseButton.PRIMARY)) {
@@ -332,14 +331,14 @@ public class BalloonsGame extends Application {
 
 		final Timeline balloonsWinTimeline = TimelineBuilder.create()
 				.cycleCount(Animation.INDEFINITE)
-				.keyFrames(new KeyFrame(Duration.seconds(5),
+				.keyFrames(new KeyFrame(Duration.seconds(3),
 						new KeyValue(balloonsWin.translateYProperty(), -Resources.balloonsWin.getHeight()),
 						new KeyValue(balloonsWin.opacityProperty(), .25),
 						new KeyValue(balloonsWin.scaleXProperty(), .25),
 						new KeyValue(balloonsWin.scaleYProperty(), .25)
 				))
 				.build();
-			
+		
 		final Button playButton = new Button("Voltar");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
 		center(playButton, 20);
@@ -362,7 +361,7 @@ public class BalloonsGame extends Application {
 
 		ImageView iwatinha = new ImageView(Resources.iwatinha_happy);
 		iwatinha.setTranslateX(10);
-		iwatinha.setTranslateY(250);
+		iwatinha.translateYProperty().bind(text.translateYProperty());
 		group.getChildren().add(iwatinha);
 
 		Credits credits = new Credits();
