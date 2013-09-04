@@ -462,7 +462,8 @@ public class BalloonsGame extends Application {
 		int colorIndex = random.nextInt(Resources.balloons.length);
 		int logoIndex = random.nextInt(Resources.LOGO_COUNT);
 
-		if (bonusCount == 10) {
+		int count = hardMode ? 15 : 10;
+		if (bonusCount == count) {
 			logoIndex = BONUS_INDEX;
 			bonusCount = 0;
 		}
