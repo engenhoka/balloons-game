@@ -12,6 +12,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,6 +29,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -245,33 +247,44 @@ public class BalloonsGame extends Application {
 	private BooleanProperty showModes(Group group, final Button playButton,	double xAxisDeviation) {
 		final ToggleGroup tgroup = new ToggleGroup();
 
+		final HBox box = new HBox(8);
+		box.translateXProperty().bind(playButton.translateXProperty().add(xAxisDeviation));
+		box.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
+		box.setVisible(false);
+
 		final ToggleButton easy = new ToggleButton();
 		easy.setToggleGroup(tgroup);
 		easy.setMinSize(100, 50);
 		easy.setStyle("-fx-base: lightgreen;");
 		easy.setSelected(!hardMode);
-		easy.setVisible(false);
-		easy.translateXProperty().bind(playButton.translateXProperty().add(xAxisDeviation));
-		easy.translateYProperty().bind(playButton.translateYProperty().subtract(-100));
 
 		final ToggleButton hard = new ToggleButton();
 		hard.setToggleGroup(tgroup);
 		hard.setMinSize(100, 50);
 		hard.setStyle("-fx-base: red;");
 		hard.setSelected(hardMode);
-		hard.setVisible(false);
-		hard.translateXProperty().bind(easy.translateXProperty().add(120));
-		hard.translateYProperty().bind(easy.translateYProperty());
+
+		final Button quit = new Button("Sair do jogo");
+		quit.setMinSize(100, 50);
+		quit.setStyle("-fx-base: black; -fx-font: 20px \"Verdana\"");
 
 		easy.setOnMouseClicked(new EventHandler<MouseEvent>() {	@Override public void handle(MouseEvent evt) {
 			hard.setSelected(!easy.isSelected());
 		}});
+
 		hard.setOnMouseClicked(new EventHandler<MouseEvent>() {	@Override public void handle(MouseEvent evt) {
 			easy.setSelected(!hard.isSelected());
 		}});
 
-		group.getChildren().add(easy);
-		group.getChildren().add(hard);
+		quit.setOnMouseClicked(new EventHandler<MouseEvent>() {	@Override public void handle(MouseEvent evt) {
+			Platform.exit();
+		}});
+
+		box.getChildren().add(easy);
+		box.getChildren().add(hard);
+		box.getChildren().add(quit);
+
+		group.getChildren().add(box);
 
 		final Rectangle hiddenSquare = new Rectangle(100, 100);
 		hiddenSquare.setFill(Color.BLUE);
@@ -282,8 +295,7 @@ public class BalloonsGame extends Application {
 		hiddenSquare.setOnMouseClicked(new EventHandler<MouseEvent>() { @Override public void handle(MouseEvent evt) {
 			if (evt.getButton().equals(MouseButton.PRIMARY)) {
 				if (evt.getClickCount() >= 2) {
-					easy.setVisible(!easy.isVisible());
-					hard.setVisible(!hard.isVisible());
+					box.setVisible(!box.isVisible());
 				}
 			}
 		}});
@@ -299,20 +311,20 @@ public class BalloonsGame extends Application {
 		balloonsTimeline.stop();
 
 		final Group group = new Group();
-		
+
 		final DropShadow dropShadow = new DropShadow();
 		dropShadow.setRadius(5.0);
 		dropShadow.setOffsetX(5.0);
 		dropShadow.setOffsetY(5.0);
 		dropShadow.setColor(Color.DARKOLIVEGREEN);
-		
+
 		final Text text = new Text("Voc\u00EA ganhou!!");
 		text.setFont(Font.font("Verdana", FontWeight.BOLD, 110));
 		text.setEffect(dropShadow);
 		text.setFill(Color.DARKGREEN);
 		text.setStroke(Color.BLACK);
 		center(text);
-		
+
 		final Timeline shadowTimeline = TimelineBuilder.create()
 				.cycleCount(Animation.INDEFINITE)
 				.autoReverse(true)
@@ -323,9 +335,9 @@ public class BalloonsGame extends Application {
 						new KeyValue(text.strokeProperty(), Color.WHITESMOKE)
 						))
 						.build();
-		
+
 		final ImageView balloonsWin = new ImageView(Resources.balloonsWin);
-		
+
 		balloonsWin.setTranslateX(random.nextDouble() * 1024);
 		balloonsWin.setTranslateY(background.heightProperty().add(Resources.balloonsWin.getHeight()).get());
 
@@ -338,15 +350,15 @@ public class BalloonsGame extends Application {
 						new KeyValue(balloonsWin.scaleYProperty(), .25)
 				))
 				.build();
-		
+
 		final Button playButton = new Button("Voltar");
 		playButton.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
 		center(playButton, 20);
-		
+
 		group.getChildren().add(playButton);
 		group.getChildren().add(balloonsWin);
 		group.getChildren().add(text);
-		
+
 		shadowTimeline.play();
 		balloonsWinTimeline.play();
 
@@ -440,7 +452,7 @@ public class BalloonsGame extends Application {
 	private void center(Control control) {
 		center(control, 0);
 	}
-	
+
 	private void center(Control control, double yDelta) {
 		control.translateXProperty().bind(scene.widthProperty().divide(2).subtract(control.widthProperty().divide(2)));
 		control.translateYProperty().bind(scene.heightProperty().divide(2).subtract(control.heightProperty().divide(2)).add(yDelta));
@@ -547,8 +559,8 @@ public class BalloonsGame extends Application {
 			}
 		}});
 
-		KeyFrame kf0 = new KeyFrame(Duration.millis(1000), 
-				new KeyValue(logoView.translateXProperty(), offsetX), 
+		KeyFrame kf0 = new KeyFrame(Duration.millis(1000),
+				new KeyValue(logoView.translateXProperty(), offsetX),
 				new KeyValue(logoView.translateYProperty(), offsetY)
 		);
 
